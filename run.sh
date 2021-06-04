@@ -1,2 +1,2 @@
 gcc -o main *.c
-main
+./main
