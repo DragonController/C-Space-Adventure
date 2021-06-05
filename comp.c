@@ -5,7 +5,45 @@
 
 #include "header.h"
 
-char planets[18][100] = {"Mercury", "A very hot planet, closest to the sun.", "Venus", "It's very cloudy here!", "Earth", "There is something very familiar about this planet.", "Mars", "Known as the red planet.", "Jupiter", "A gas giant, with a noticeable red spot.", "Saturn", "This planet has beautiful rings around it.", "Uranus", "Strangely, this planet rotates around on its side.", "Neptune", "A very cold planet, furthest from the sun.", "Pluto", "I don't care what they say - it's a planet."};
+void readJSON(char* arg)
+{
+  FILE* file = fopen("planetarySystem.json", "r");
+  char string[2048];
+  char* output = malloc(1024);
+  cJSON* json;
+  cJSON* planet = NULL;
+  cJSON* planetz = NULL;
+  int i = 0;
+  int newline = 0;
+  while (!feof(file))
+  {
+    string[i++] = fgetc(file);
+    if (string[i - 1] == '\n')
+    {
+      newline = 1;
+      i--;
+    } else if (string[i - 1] == ' ' && newline == 1) {
+      i--;
+    } else {
+      newline = 0;
+    }
+  }
+  string[i] = '\0';
+  json = cJSON_Parse(string);
+  planetz = cJSON_GetObjectItem(json, "planets");
+  i = 0;
+  cJSON_ArrayForEach(planet, planetz)
+  {
+    cJSON* name = cJSON_GetObjectItem(planet, "name");
+    cJSON* description = cJSON_GetObjectItem(planet, "description");
+    strcpy(planets[i++], name->valuestring);
+    strcpy(planets[i++], description->valuestring);
+    //printf("%s\n", name->valuestring);
+  }
+  //output = planetz->valuestring;
+  //printf("%s\n", output);
+  fclose(file);
+}
 
 void printWelcome()
 {
@@ -32,7 +70,7 @@ void printGreeting(char* name)
 
 int randomTravel()
 {
-  char* input = malloc(256);
+  char input[256];
   while (1) {
     printf("Shall I randomly choose a planet for you to visit? (Y or N)\n");
     fgets(input, 256, stdin);
