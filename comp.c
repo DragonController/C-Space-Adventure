@@ -99,10 +99,15 @@ void travelToRandomPlanet()
 void travelTo(char* planet)
 {
   int i;
+  int found = 0;
   for (i = 0; i < 18; i += 2) {
     if (strcmp(planet, planets[i]) == 0) {
+      found = 1;
       printf("Traveling to %s...\n", planets[i]);
       printf("Arrived at %s. %s\n", planets[i], planets[i + 1]);
     }
+  }
+  if (found == 0) {
+    travelToRandomPlanet();
   }
 }
